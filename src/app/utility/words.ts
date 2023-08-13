@@ -2432,4 +2432,4 @@ const wordlist = [
   'zombie',
   'zoo',
 ];
-export const wordList = new Set(wordlist);
+export const wordList = Array.from(new Set(wordlist));

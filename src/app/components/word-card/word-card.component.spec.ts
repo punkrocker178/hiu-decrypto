@@ -7,9 +7,8 @@ describe('WordCardComponent', () => {
   let fixture: ComponentFixture<WordCardComponent>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [WordCardComponent]
-    });
+    // TestBed.configureTestingModule({
+    // });
     fixture = TestBed.createComponent(WordCardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-word-card',
@@ -7,5 +7,6 @@ import { Component } from '@angular/core';
   standalone: true
 })
 export class WordCardComponent {
-
+  @Input() word: string;
+  @Input() number: number;
 }

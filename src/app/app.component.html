@@ -1,1 +1,20 @@
-<app-word-card></app-word-card>
+<header>
+  <nav>
+    <div class="page-title">DECRYPTO</div>
+  </nav>
+</header>
+
+<div class="container">
+  <ng-container *ngFor="let word of words">
+    <app-word-card [word]="word"></app-word-card>
+  </ng-container>
+
+  <button (click)="generateCode()">Generate code</button>
+  <button (click)="randomizeWords()">Pick words for me</button>
+</div>
+
+<footer class="footer">
+  <div class="content has-text-centered">
+    2023
+  </div>
+</footer>

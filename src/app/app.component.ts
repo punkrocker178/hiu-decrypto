@@ -7,7 +7,7 @@ import { wordList } from './utility/words';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  public words: string[] = Array(4);
+  public words: string[] = Array(4).fill('-');
   public codes: number[] = Array(3);
   public wordsMap: Map<string, number> = new Map();
   public codesMap: Map<number, number> = new Map();
@@ -24,6 +24,7 @@ export class AppComponent implements OnInit {
       }
       this.codesMap.set(random, i);
       this.codes[i] = random;
+      console.log(this.codes);
     }
   }
 

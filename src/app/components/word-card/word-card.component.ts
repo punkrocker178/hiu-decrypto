@@ -8,5 +8,5 @@ import { Component, Input } from '@angular/core';
 })
 export class WordCardComponent {
   @Input() word: string;
-  @Input() number: number;
+  @Input() index: number;
 }

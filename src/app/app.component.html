@@ -5,11 +5,21 @@
 </header>
 
 <div class="container">
-  <ng-container *ngFor="let word of words">
-    <app-word-card [word]="word"></app-word-card>
-  </ng-container>
+  <div class="columns is-mobile" *ngFor="let word of words; let idx = index">
+    <div class="column">
+      <app-word-card [word]="word" [index]="idx"></app-word-card>
+    </div>
+  </div>
 
-  <button (click)="generateCode()">Generate code</button>
+  <div class="card">
+    <div class="card-content">
+      <div class="generated-codes content has-text-centered is-size-2-mobile is-size-3">
+        {{ codes.join('') }}
+      </div>
+    </div>
+  </div>
+
+  <button [disabled]="wordsMap.size === 0 || codesMap.size > 0" (click)="generateCode()">Generate code</button>
   <button (click)="randomizeWords()">Pick words for me</button>
 </div>
 

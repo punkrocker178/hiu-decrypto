@@ -1,9 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'codeDisplay'
+  name: 'nullableValue'
 })
-export class CodeDisplayPipe implements PipeTransform {
+export class NullableValuePipe implements PipeTransform {
 
   transform(value: number[], ...args: unknown[]): string {
     console.log(value);

@@ -4,12 +4,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { WordCardComponent } from './components/word-card/word-card.component';
-import { CodeDisplayPipe } from './pipes/code-display.pipe';
+import { NullableValuePipe } from './pipes/nullableValue.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CodeDisplayPipe
+    NullableValuePipe
   ],
   imports: [
     BrowserModule,

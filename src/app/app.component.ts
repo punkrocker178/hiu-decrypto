@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { wordList } from './utility/words';
+import Pusher  from 'pusher-js';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,7 @@ export class AppComponent implements OnInit {
   public codesMap: Map<number, number> = new Map();
 
   ngOnInit(): void {
+    this._subscribePusher();
   }
 
   public generateCode(): void {
@@ -54,5 +56,20 @@ export class AppComponent implements OnInit {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
+  }
+
+  private _subscribePusher(): void {
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('761c85d3ce543ed44588', {
+      cluster: 'ap1'
+    });
+
+    var channel = pusher.subscribe('decipher-channel');
+    channel.bind('team1-guess-event', function(data: any) {
+    });
+
+    channel.bind('team2-guess-event', function(data: any) {
+    });
   }
 }

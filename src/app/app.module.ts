@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { WordCardComponent } from './components/word-card/word-card.component';
 import { NullableValuePipe } from './pipes/nullableValue.pipe';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -13,6 +14,7 @@ import { NullableValuePipe } from './pipes/nullableValue.pipe';
   ],
   imports: [
     BrowserModule,
+    ReactiveFormsModule,
     AppRoutingModule,
     WordCardComponent
   ],

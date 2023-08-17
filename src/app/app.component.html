@@ -14,7 +14,7 @@
   <div class="card mb-3">
     <div class="card-content">
       <div class="generated-codes content has-text-centered is-size-2-mobile is-size-3">
-        {{ codesMap.size > 0 ? playerCodes : '000' }}
+        {{ playerCodes.length > 0 && !isHideCode ? playerCodes : '000' }}
       </div>
     </div>
   </div>
@@ -22,19 +22,26 @@
   <button [disabled]="wordsMap.size === 0 || (wordsMap.size > 0 && isReady)" class="button mr-3" (click)="ready()">
     Ready
   </button>
-  <button *ngIf="!isGameStarted" (click)="randomizeWords()" class="button">Pick words for me</button>
+  <button *ngIf="!isRoundStarted" (click)="randomizeWords()" class="button">Pick words for me</button>
 
-  <ng-container *ngIf="isGameStarted">
+  <ng-container *ngIf="isRoundStarted">
     <div>
       Round {{ round }}
     </div>
-    <input [formControl]="guessControl" type="text" [maxLength]="3">
-    <button class="button" (click)="guess()">Decrypt</button>
+    <div>
+      <input class="input" [formControl]="guessControl" type="text" [maxLength]="3">
+      <button *ngIf="!isRoundEnded" [disabled]="playerGuess && playerGuess.length > 0" class="button ml-2" (click)="guess()">Decrypt</button>
+    </div>
+  </ng-container>
+  <button *ngIf="isRoundEnded" class="button ml-2" (click)="newRound()">New round</button>
+
+  <ng-container>
+    <button (click)="resetGame()">Reset game - dont click</button>
   </ng-container>
 </div>
 
-<footer class="footer">
+<!-- <footer class="footer">
   <div class="content has-text-centered">
     2023
   </div>
-</footer>
+</footer> -->

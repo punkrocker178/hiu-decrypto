@@ -4,19 +4,23 @@ import { Observable } from "rxjs";
 
 @Injectable()
 export class GameService {
-    constructor(
-        private readonly _httpClient: HttpClient
-    ) {}
+  constructor(
+    private readonly _httpClient: HttpClient
+  ) { }
 
-    public ready(playerId: any): Observable<any> {
-        return this._httpClient.post('/api/ready', { playerId }, { responseType: 'text'});
-    }
+  public ready(playerId: any): Observable<any> {
+    return this._httpClient.post('/api/ready', { playerId }, { responseType: 'text' });
+  }
 
-    public startGame(state: any): Observable<any> {
-        return this._httpClient.post('/api/start', state, { responseType: 'text'});
-    }
+  public playerGuest(payload: any): Observable<any> {
+    return this._httpClient.post('/api/guess', payload, { responseType: 'text' });
+  }
 
-    public playerGuest(payload: any): Observable<any> {
-        return this._httpClient.post('/api/guess', payload, { responseType: 'text'});
-    }
+  public newRound(): Observable<any> {
+    return this._httpClient.post('/api/startRound', null, { responseType: 'text' });
+  }
+
+  public reset(): Observable<any> {
+    return this._httpClient.post('/api/reset', null, { responseType: 'text' });
+  }
 }

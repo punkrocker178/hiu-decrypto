@@ -196,6 +196,7 @@ export class AppComponent implements OnInit {
 
     this.pusherChannel.bind(EVENTS.ROUND_ENDED, (data: any) => {
       this.isRoundEnded = true;
+      this.isHideCode = false;
       this.successToken = data.result[this.player].successToken;
       this.failedToken = data.result[this.player].failedToken;
 

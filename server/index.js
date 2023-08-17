@@ -84,7 +84,6 @@ app.post('/api/ready', (req, res) => {
   if (state.numReady == NUM_PLAYERS) {
     const codes = generateCode().join('');
     state.generatedCode = codes;
-
     const playerIds = Object.keys(state.players);
     for (let i = 1; i <= MAX_ROUNDS; i++) {
       if (i % 2 === 0) {
@@ -148,6 +147,8 @@ app.post('/api/reset', (req, res) => {
   state.round = 1;
   state.generatedCode = '';
   state.numReady = 0;
+  state.players = {};
+  state.playersTurn = [];
   for (let player in state.players) {
     state.players[player] = {
       successToken: 0,

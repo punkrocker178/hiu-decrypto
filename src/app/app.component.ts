@@ -42,6 +42,9 @@ export class AppComponent implements OnInit {
   public successToken: number;
   public failedToken: number;
 
+  public isWin: boolean;
+  public isLose: boolean;
+
   private _timeout: any;
 
   constructor(

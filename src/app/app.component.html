@@ -14,17 +14,20 @@
   <div class="card mb-3">
     <div class="card-content">
       <div class="generated-codes content has-text-centered is-size-2-mobile is-size-3">
-        {{ codesMap.size > 0 ? generatedCode : '000' }}
+        {{ codesMap.size > 0 ? playerCodes : '000' }}
       </div>
     </div>
   </div>
 
-  <button [disabled]="wordsMap.size === 0 && isReady" class="button mr-3" (click)="ready()">
+  <button [disabled]="wordsMap.size === 0 || (wordsMap.size > 0 && isReady)" class="button mr-3" (click)="ready()">
     Ready
   </button>
-  <button (click)="randomizeWords()" class="button">Pick words for me</button>
+  <button *ngIf="!isGameStarted" (click)="randomizeWords()" class="button">Pick words for me</button>
 
   <ng-container *ngIf="isGameStarted">
+    <div>
+      Round {{ round }}
+    </div>
     <input [formControl]="guessControl" type="text" [maxLength]="3">
     <button class="button" (click)="guess()">Decrypt</button>
   </ng-container>

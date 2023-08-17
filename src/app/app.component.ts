@@ -4,6 +4,7 @@ import Pusher, { PresenceChannel } from 'pusher-js';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EVENTS } from './utility/events';
 import { FormControl } from '@angular/forms';
+import { GameService } from './services/game.service';
 
 @Component({
   selector: 'app-root',
@@ -46,25 +47,20 @@ export class AppComponent implements OnInit {
   public failedToken: number;
 
   constructor(
-    private readonly _router: Router
+    private readonly _router: Router,
+    private readonly _gameService: GameService
   ) {
   }
 
   ngOnInit(): void {
     this._setGameId();
-
-    setTimeout(() => this._subscribePusher(), 50);
+    this._subscribePusher();
   }
 
 
   public ready(): void {
     this.isReady = true;
-
-    if (this.opponentReady) {
-      this.startGame();
-    }
-
-    this.pusherChannel.trigger(EVENTS.PLAYER_READY, this.player);
+    this._gameService.ready(this.player).subscribe((res) => console.log(res));
   }
 
   public startGame(): void {
@@ -76,45 +72,50 @@ export class AppComponent implements OnInit {
         this.playersTurn.push(membersId[0]);
       }
     }
-    this.isGameStarted = true;
-    this.startRound(this.round);
-    // this.pusherChannel.trigger(EVENTS.START_GAME, {
-    //   round: 1,
-    //   playersTurn: this.playersTurn
-    // });
+
+    const initGameState = {
+      members: Object.create({}),
+      playersTurn: this.playersTurn,
+      round: 1
+    };
+
+    membersId.forEach(playerId => {
+      initGameState.members[playerId] = {
+        successToken: 0,
+        failedToken: 0
+      }
+    });
+
+    this._gameService.startGame(initGameState).subscribe(() => {
+    });
   }
 
   public startRound(round: number) {
-    this.generateCode();
-    this.generatedCode = this.codes.join('');
+    // this.generateCode();
+    // this.generatedCode = this.codes.join('');
 
     if (this.playersTurn[round - 1] === this.player) {
       this.playerCodes = this.generatedCode;
-      this.opponentCodes = null;
+      this.opponentCodes = '---';
     } else {
-      this.playerCodes = null;
+      this.playerCodes = '---';
       this.opponentCodes = this.generatedCode;
     }
   }
 
   public endRound(): void {
     this.round++;
+    this.startRound(this.round);
   }
 
   public guess(): void {
-    // if (this.playerGuess !== this.playerCodes) {
-    //   this.failedToken ++;
-    // }
-
-    // if (this.playerGuess === this.opponentCodes) {
-    //   this.successToken++;
-    // }
-
     this.playerGuess = this.guessControl.value;
+    const guessPayload = {
+      playerGuess: this.playerGuess,
+      playerId: this.player
+    }
+    this._gameService.playerGuest(guessPayload).subscribe(() => {
 
-    this.pusherChannel.trigger(EVENTS.GUESS_EVENT, {
-      playerId: this.player,
-      playerGuess: this.playerGuess
     });
   }
 
@@ -173,6 +174,7 @@ export class AppComponent implements OnInit {
           onSameUrlNavigation: 'reload'
         }
       );
+      this.gameId = gameId;
     } else {
       this.gameId = currentGameId;
     }
@@ -186,21 +188,27 @@ export class AppComponent implements OnInit {
     });
 
     this.pusherChannel = pusher.subscribe(this.gameId) as PresenceChannel;
-    // const channel = pusher.subscribe('decipher-channel');
-    this.pusherChannel.bind(EVENTS.GUESS_EVENT, function (data: any) {
-    });
+    // this.pusherChannel.bind(EVENTS.CLIENT_PLAYER_READY, (playerId: string) => {
+    //   this.opponentReady = true;
 
-    this.pusherChannel.bind(EVENTS.PLAYER_READY, (playerId: string) => {
-      // this.playersReady++;
-      this.opponentReady = true;
+    //   if (this.isReady === this.opponentReady) {
+    //     this.startGame();
+    //   }
+    // });
 
-      if (this.isReady === this.opponentReady) {
-        this.startGame();
-      }
-    });
+    this.pusherChannel.bind(EVENTS.ROUND_STARTED, (data: any) => {
+      this.generatedCode = data.generatedCode;
 
-    this.pusherChannel.bind(EVENTS.START_GAME, (data: any) => {
-      this.pusherChannel.trigger(EVENTS.START_ROUND, {});
+      // Should init game before round starts
+      this.startGame();
+    })
+
+    this.pusherChannel.bind(EVENTS.ROUND_ENDED, (data: any) => {
+      console.log(data);
+      this.successToken = data.successToken;
+      this.failedToken = data.failedToken;
+
+      this.endRound();
     });
 
     this.pusherChannel.bind(EVENTS.MEMBER_ADDED, (member: any) => this.players++);

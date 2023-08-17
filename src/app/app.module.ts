@@ -6,6 +6,9 @@ import { AppComponent } from './app.component';
 import { WordCardComponent } from './components/word-card/word-card.component';
 import { NullableValuePipe } from './pipes/nullableValue.pipe';
 import { ReactiveFormsModule } from '@angular/forms';
+import { GameService } from './services/game.service';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -14,11 +17,15 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
     BrowserModule,
+    CommonModule,
+    HttpClientModule,
     ReactiveFormsModule,
     AppRoutingModule,
     WordCardComponent
   ],
-  providers: [],
+  providers: [
+    GameService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

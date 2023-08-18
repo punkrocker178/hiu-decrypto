@@ -12,6 +12,7 @@ import { GameService } from './services/game.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  public readonly TIME_OUT = 4000;
 
   public words: string[] = Array(4).fill('-');
   public codes: number[] = Array(3);
@@ -40,11 +41,15 @@ export class AppComponent implements OnInit {
   public playerGuess: string | null;
   public guessControl: FormControl<string> = new FormControl();
 
-  public successToken: number;
-  public failedToken: number;
+  public successToken: number = 0;
+  public failedToken: number = 0;
 
   public isWin: boolean;
   public isLose: boolean;
+
+  // Offline
+  public isOfflineMode: boolean;
+  public isCodeGenerated: boolean;
 
   private _timeout: any;
 
@@ -80,7 +85,7 @@ export class AppComponent implements OnInit {
 
     this._timeout = setTimeout(() => {
       this.isHideCode = true;
-    }, 3000);
+    }, this.TIME_OUT);
   }
 
   public endRound(): void {
@@ -106,10 +111,20 @@ export class AppComponent implements OnInit {
   }
 
   public resetGame(): void {
-    this._gameService.reset().subscribe();
+    if (!this.isOfflineMode) {
+      this._gameService.reset().subscribe();
+    } else {
+      this.words.fill('-');
+      this.wordsMap.clear();
+      this.codesMap.clear();
+      this.codes.fill(0);
+      this.playerCodes = '---';
+      this.isCodeGenerated = false;
+      this.isHideCode = false;
+    }
   }
 
-  public generateCode(): void {
+  public clientGenerateCode(): void {
     this.codesMap.clear();
     for (let i = 0; i < this.codes.length; i++) {
       let random = this._getRandomInt(1, 5);
@@ -118,6 +133,11 @@ export class AppComponent implements OnInit {
       }
       this.codesMap.set(random, i);
       this.codes[i] = random;
+      this.playerCodes = this.codes.join('');
+      this.isCodeGenerated = true;
+      setTimeout(() => {
+        this.isHideCode = true;
+      }, this.TIME_OUT);
     }
   }
 
@@ -207,13 +227,14 @@ export class AppComponent implements OnInit {
       this.isHideCode = false;
       this.successToken = data.result[this.player].successToken;
       this.failedToken = data.result[this.player].failedToken;
+      alert(`Round has ended. The correct answer is ${this.generatedCode}`)
 
       if (this.successToken === 2) {
-
+        alert(`You WINNNNNNNNNNN`);
       }
 
       if (this.failedToken === 2) {
-
+        alert(`You lose :(`);
       }
 
       this.endRound();

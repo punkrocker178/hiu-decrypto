@@ -159,6 +159,7 @@ app.post('/api/reset', (req, res) => {
 });
 
 // direct all other requests to the built app view
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, './dist/hiu-decrypto/index.html'));
 });

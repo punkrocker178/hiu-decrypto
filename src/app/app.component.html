@@ -5,48 +5,104 @@
 </header>
 <router-outlet></router-outlet>
 <div class="container is-fluid">
-  <button *ngIf="!isRoundStarted" (click)="randomizeWords()" class="button mb-2 is-info w-100">Pick words for me</button>
+  <ng-container *ngIf="!isOfflineMode">
+    <button *ngIf="!isRoundStarted" (click)="randomizeWords()" class="button mb-2 is-info w-100">Pick words for
+      me</button>
 
-  <div class="columns is-multiline mb-3">
-    <div class="column is-half-tablet is-one-quarter-fullhd" *ngFor="let word of words; let idx = index">
-      <div class="mb-2">
-        <app-word-select [wordList]="wordListFile" (wordSelected)="updateWord($event, idx)"></app-word-select>
-      </div>
-      <app-word-card [word]="word" [index]="idx"></app-word-card>
-    </div>
-  </div>
-
-  <div class="card mb-3">
-    <header class="card-header">
-      <div class="card-header-title">Your code</div>
-    </header>
-    <div class="card-content">
-      <div class="generated-codes content has-text-centered is-size-2-mobile is-size-3">
-        {{ playerCodes.length > 0 && !isHideCode ? playerCodes : '000' }}
+    <div class="columns is-multiline mb-3">
+      <div class="column is-half-tablet is-one-quarter-fullhd" *ngFor="let word of words; let idx = index">
+        <div class="mb-2">
+          <app-word-select [wordList]="wordListFile" (wordSelected)="updateWord($event, idx)"></app-word-select>
+        </div>
+        <app-word-card [word]="word" [index]="idx"></app-word-card>
       </div>
     </div>
-  </div>
 
-  <button [disabled]="wordsMap.size === 0 || (wordsMap.size > 0 && isReady)" class="button" (click)="ready()">
-    Ready
-  </button>
-
-  <ng-container *ngIf="isRoundStarted">
-    <div class="is-uppercase has-text-weight-bold">
-      Round {{ round }}
+    <div class="card mb-3">
+      <header class="card-header">
+        <div class="card-header-title">Your code</div>
+      </header>
+      <div class="card-content">
+        <div class="generated-codes content has-text-centered is-size-2-mobile is-size-3">
+          {{ playerCodes.length > 0 && !isHideCode ? playerCodes : '000' }}
+        </div>
+      </div>
     </div>
-    <div>
-      <input class="input" [formControl]="guessControl" type="text" [maxLength]="3">
-      <button *ngIf="!isRoundEnded" [disabled]="playerGuess && playerGuess.length > 0" class="button ml-2"
-        (click)="guess()">Decrypt</button>
+
+    <button [disabled]="wordsMap.size === 0 || (wordsMap.size > 0 && isReady)" class="button is-primary" (click)="ready()">
+      Ready
+    </button>
+
+    <ng-container *ngIf="isRoundStarted">
+      <div class="is-uppercase has-text-weight-bold">
+        Round {{ round }}
+      </div>
+      <div>
+        <input class="input mb-2" [formControl]="guessControl" type="text" [maxLength]="3">
+        <button *ngIf="!isRoundEnded" [disabled]="playerGuess && playerGuess.length > 0" class="w-100 button is-primary"
+          (click)="guess()">Decrypt</button>
+      </div>
+    </ng-container>
+
+    <div class="card mb-3">
+      <header class="card-header">
+        <div class="card-header-title">Summary</div>
+      </header>
+      <div class="card-content has-text-weight-bold">
+        <div class="has-text-success">Success: {{ successToken }}</div>
+        <div class="has-text-danger">Failed: {{ failedToken }}</div>
+      </div>
+      <div *ngIf="successToken == 2">
+        <div>You Win!</div>
+        <div class="image-container">
+          <img src="assets/img/decrypto3.webp" alt="yea" />
+        </div>
+      </div>
+      <div *ngIf="failedToken == 2">
+        <div>You Lose!</div>
+        <div class="image-container">
+          <img src="assets/img/decrypto2.webp" alt="huhu" />
+        </div>
+      </div>
+    </div>
+
+    <button *ngIf="isRoundEnded" class="button ml-2" (click)="newRound()">New round</button>
+  </ng-container>
+
+  <ng-container *ngIf="isOfflineMode">
+    <button *ngIf="!isRoundStarted" (click)="randomizeWords()" class="button mb-2 is-info w-100">Pick words for
+      me</button>
+    <button class="button mb-2 is-warning w-100" 
+    [disabled]="isCodeGenerated" (click)="clientGenerateCode()">Generate code</button>
+
+    <div class="columns is-multiline mb-3">
+      <div class="column is-half-tablet is-one-quarter-fullhd" *ngFor="let word of words; let idx = index">
+        <div class="mb-2">
+          <app-word-select [wordList]="wordListFile" (wordSelected)="updateWord($event, idx)"></app-word-select>
+        </div>
+        <app-word-card [word]="word" [index]="idx"></app-word-card>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <header class="card-header">
+        <div class="card-header-title">Your code</div>
+      </header>
+      <div class="card-content">
+        <div class="generated-codes content has-text-centered is-size-2-mobile is-size-3">
+          {{ playerCodes.length > 0 && !isHideCode ? playerCodes : '000' }}
+        </div>
+      </div>
     </div>
   </ng-container>
-  <button *ngIf="isRoundEnded" class="button ml-2" (click)="newRound()">New round</button>
-
+  
   <ng-container>
-    <button (click)="resetGame()" class="button is-danger w-100 reset-btn">Reset game - dont click</button>
+    <button (click)="resetGame()" class="button is-danger w-100 reset-btn mb-2">Reset game - dont click</button>
+    <button (click)="isOfflineMode = true" class="button is-info w-100">Offline mode</button>
   </ng-container>
 </div>
+
+
 
 <!-- <footer class="footer">
   <div class="content has-text-centered">

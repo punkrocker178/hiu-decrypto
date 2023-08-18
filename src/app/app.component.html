@@ -10,7 +10,7 @@
       me</button>
 
     <div class="columns is-multiline mb-3">
-      <div class="column is-half-tablet is-one-quarter-fullhd" *ngFor="let word of words; let idx = index">
+      <div class="column is-half-tablet is-one-quarter-fullhd mb-2" *ngFor="let word of words; let idx = index">
         <div class="mb-2">
           <app-word-select [wordList]="wordListFile" (wordSelected)="updateWord($event, idx)"></app-word-select>
         </div>
@@ -38,6 +38,7 @@
         Round {{ round }}
       </div>
       <div>
+        <label class="label">Your guess</label>
         <input class="input mb-2" [formControl]="guessControl" type="text" [maxLength]="3">
         <button *ngIf="!isRoundEnded" [disabled]="playerGuess && playerGuess.length > 0" class="w-100 button is-primary"
           (click)="guess()">Decrypt</button>
@@ -72,7 +73,7 @@
   <ng-container *ngIf="isOfflineMode">
     <button *ngIf="!isRoundStarted" (click)="randomizeWords()" class="button mb-2 is-info w-100">Pick words for
       me</button>
-    <button class="button mb-2 is-warning w-100" 
+    <button class="button mb-2 is-warning w-100"
     [disabled]="isCodeGenerated" (click)="clientGenerateCode()">Generate code</button>
 
     <div class="columns is-multiline mb-3">
@@ -95,7 +96,7 @@
       </div>
     </div>
   </ng-container>
-  
+
   <ng-container>
     <button (click)="resetGame()" class="button is-danger w-100 reset-btn mb-2">Reset game - dont click</button>
     <button (click)="isOfflineMode = true" class="button is-info w-100">Offline mode</button>

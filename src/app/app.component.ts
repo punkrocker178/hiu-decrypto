@@ -12,7 +12,7 @@ import { GameService } from './services/game.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  public readonly TIME_OUT = 4000;
+  public readonly TIME_OUT = 5000;
 
   public words: string[] = Array(4).fill('-');
   public codes: number[] = Array(3);

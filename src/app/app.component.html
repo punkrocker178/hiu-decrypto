@@ -4,14 +4,22 @@
   </nav>
 </header>
 <router-outlet></router-outlet>
-<div class="container">
+<div class="container is-fluid">
+  <button *ngIf="!isRoundStarted" (click)="randomizeWords()" class="button mb-2 is-info w-100">Pick words for me</button>
+
   <div class="columns is-multiline mb-3">
     <div class="column is-half-tablet is-one-quarter-fullhd" *ngFor="let word of words; let idx = index">
+      <div class="mb-2">
+        <app-word-select [wordList]="wordListFile" (wordSelected)="updateWord($event, idx)"></app-word-select>
+      </div>
       <app-word-card [word]="word" [index]="idx"></app-word-card>
     </div>
   </div>
 
   <div class="card mb-3">
+    <header class="card-header">
+      <div class="card-header-title">Your code</div>
+    </header>
     <div class="card-content">
       <div class="generated-codes content has-text-centered is-size-2-mobile is-size-3">
         {{ playerCodes.length > 0 && !isHideCode ? playerCodes : '000' }}
@@ -19,24 +27,24 @@
     </div>
   </div>
 
-  <button [disabled]="wordsMap.size === 0 || (wordsMap.size > 0 && isReady)" class="button mr-3" (click)="ready()">
+  <button [disabled]="wordsMap.size === 0 || (wordsMap.size > 0 && isReady)" class="button" (click)="ready()">
     Ready
   </button>
-  <button *ngIf="!isRoundStarted" (click)="randomizeWords()" class="button">Pick words for me</button>
 
   <ng-container *ngIf="isRoundStarted">
-    <div>
+    <div class="is-uppercase has-text-weight-bold">
       Round {{ round }}
     </div>
     <div>
       <input class="input" [formControl]="guessControl" type="text" [maxLength]="3">
-      <button *ngIf="!isRoundEnded" [disabled]="playerGuess && playerGuess.length > 0" class="button ml-2" (click)="guess()">Decrypt</button>
+      <button *ngIf="!isRoundEnded" [disabled]="playerGuess && playerGuess.length > 0" class="button ml-2"
+        (click)="guess()">Decrypt</button>
     </div>
   </ng-container>
   <button *ngIf="isRoundEnded" class="button ml-2" (click)="newRound()">New round</button>
 
   <ng-container>
-    <button (click)="resetGame()">Reset game - dont click</button>
+    <button (click)="resetGame()" class="button is-danger w-100 reset-btn">Reset game - dont click</button>
   </ng-container>
 </div>
 

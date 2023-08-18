@@ -1,11 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 body {
-  background-color: #ecf1fd;
-  height: 100%;
+  font-family: 'Roboto', sans-serif;
 }
 
 nav {
   height: 50px;
+  margin-bottom: 24px;
 }
 
 .page-title {
@@ -18,4 +18,8 @@ footer {
   width: 100%;
   height: 50px;
   padding: 10px !important;
+}
+
+.w-100 {
+  width: 100%;
 }

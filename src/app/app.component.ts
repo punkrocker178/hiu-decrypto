@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { wordList } from './utility/words';
 import Pusher, { PresenceChannel } from 'pusher-js';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { EVENTS } from './utility/events';
 import { FormControl } from '@angular/forms';
 import { GameService } from './services/game.service';
@@ -17,6 +17,7 @@ export class AppComponent implements OnInit {
   public codes: number[] = Array(3);
   public wordsMap: Map<string, number> = new Map();
   public codesMap: Map<number, number> = new Map();
+  public wordListFile = wordList;
 
   public pusherChannel: PresenceChannel;
 
@@ -56,6 +57,10 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this._setGameId();
     this._subscribePusher();
+  }
+
+  public updateWord(word: string, index: number) {
+    this.words[index] = word;
   }
 
   public ready(): void {

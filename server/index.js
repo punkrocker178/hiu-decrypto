@@ -92,7 +92,6 @@ app.post('/api/ready', (req, res) => {
         state.playersTurn.push(playerIds[0]);
       }
     }
-    console.log(state.round);
     pusher.trigger(state.channel, 'round-started', {
       round: state.round,
       generatedCode: codes,

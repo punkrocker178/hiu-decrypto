@@ -9,6 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { GameService } from './services/game.service';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { WordSelectComponent } from './components/word-select/word-select.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { HttpClientModule } from '@angular/common/http';
     HttpClientModule,
     ReactiveFormsModule,
     AppRoutingModule,
-    WordCardComponent
+    WordCardComponent,
+    WordSelectComponent
   ],
   providers: [
     GameService

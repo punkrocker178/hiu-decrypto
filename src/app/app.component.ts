@@ -29,6 +29,7 @@ export class AppComponent implements OnInit {
   public isReady: boolean;
   public isRoundStarted: boolean;
   public isRoundEnded: boolean;
+  public isRoundReady: boolean;
 
   public round = 1;
   public playerTurn: string = '';
@@ -94,9 +95,11 @@ export class AppComponent implements OnInit {
     this.playerCodes = '';
     this.opponentCodes = '';
     this.isRoundStarted = false;
+    this.isRoundReady = false;
   }
 
   public newRound(): void {
+    this.isRoundReady = true;
     this._gameService.newRound().subscribe();
   }
 
@@ -209,6 +212,7 @@ export class AppComponent implements OnInit {
       this.isRoundEnded = false;
       this.playerCodes = '';
       this.opponentCodes = '';
+      this.isRoundReady = false;
       this.wordsMap.clear();
       this.words.fill('');
     });

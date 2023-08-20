@@ -7,7 +7,8 @@
 <div class="container is-fluid">
   <ng-container *ngIf="!isOfflineMode">
     <button *ngIf="!isRoundStarted" (click)="randomizeWords()" class="button mb-2 is-info w-100">Pick words for
-      me</button>
+      me
+    </button>
 
     <div class="columns is-multiline mb-3">
       <div class="column is-half-tablet is-one-quarter-fullhd mb-2" *ngFor="let word of words; let idx = index">
@@ -67,7 +68,7 @@
       </div>
     </div>
 
-    <button *ngIf="isRoundEnded" class="button ml-2" (click)="newRound()">New round</button>
+    <button *ngIf="isRoundEnded" [disabled]="isRoundReady" class="button ml-2" (click)="newRound()">New round</button>
   </ng-container>
 
   <ng-container *ngIf="isOfflineMode">

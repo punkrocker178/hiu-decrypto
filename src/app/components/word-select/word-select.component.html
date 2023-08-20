@@ -1,18 +1,23 @@
-<div class="dropdown" [ngClass]="{ 'is-active': isActive }">
-  <div class="dropdown-trigger">
-    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu" (click)="isActive = !isActive">
-      <span>Select word</span>
-
-      <span class="icon is-small material-symbols-outlined">
-        expand_more
-      </span>
-    </button>
+<div [formGroup]="this.mainForm">
+  <div class="search-input mb-2">
+    <input class="input" formControlName="search" placeholder="Filter words" />
   </div>
-  <div class="dropdown-menu" id="dropdown-menu" role="menu">
-    <div class="dropdown-content">
-      <ng-container *ngFor="let word of wordList">
-        <a class="dropdown-item is-uppercase" (click)="selectWord(word)">{{ word }}</a>
-      </ng-container>
+  <div class="dropdown w-100" [ngClass]="{ 'is-active': isActive }">
+    <div class="dropdown-trigger">
+      <button class="button w-100" aria-haspopup="true" aria-controls="dropdown-menu" (click)="isActive = !isActive">
+        <span>Select word</span>
+
+        <span class="icon is-small material-symbols-outlined">
+          expand_more
+        </span>
+      </button>
+    </div>
+    <div class="dropdown-menu" id="dropdown-menu" role="menu">
+      <div class="dropdown-content">
+        <ng-container *ngFor="let word of filteredWords">
+          <a class="dropdown-item is-uppercase" (click)="selectWord(word)">{{ word }}</a>
+        </ng-container>
+      </div>
     </div>
   </div>
 </div>

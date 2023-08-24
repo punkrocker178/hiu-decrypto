@@ -40,5 +40,6 @@ export class WordSelectComponent implements OnInit {
     this.isActive = false;
 
     this.wordSelected.emit(word);
+    this.mainForm.controls['search'].reset();
   }
 }

@@ -25,6 +25,7 @@ export class AppComponent implements OnInit {
   public gameId!: string;
   public players: number = 0;
   public player: string;
+  public opponent: string;
 
   public isReady: boolean;
   public isRoundStarted: boolean;
@@ -44,6 +45,9 @@ export class AppComponent implements OnInit {
 
   public successToken: number = 0;
   public failedToken: number = 0;
+
+  public opponentSuccessToken: number = 0;
+  public opponentFailedToken: number = 0;
 
   public isWin: boolean;
   public isLose: boolean;
@@ -84,9 +88,10 @@ export class AppComponent implements OnInit {
       this.opponentCodes = this.generatedCode;
     }
 
-    this._timeout = setTimeout(() => {
-      this.isHideCode = true;
-    }, this.TIME_OUT);
+    // According to feedbacks, many players unable to remember the code
+    // this._timeout = setTimeout(() => {
+    //   this.isHideCode = true;
+    // }, this.TIME_OUT);
   }
 
   public endRound(): void {
@@ -100,7 +105,7 @@ export class AppComponent implements OnInit {
 
   public newRound(): void {
     this.isRoundReady = true;
-    this._gameService.newRound().subscribe();
+    this._gameService.newRound(this.player).subscribe();
   }
 
   public guess(): void {
@@ -127,6 +132,10 @@ export class AppComponent implements OnInit {
     }
   }
 
+  public hideCode(): void {
+    this.isHideCode = true;
+  }
+
   public clientGenerateCode(): void {
     this.codesMap.clear();
     for (let i = 0; i < this.codes.length; i++) {
@@ -138,9 +147,9 @@ export class AppComponent implements OnInit {
       this.codes[i] = random;
       this.playerCodes = this.codes.join('');
       this.isCodeGenerated = true;
-      setTimeout(() => {
-        this.isHideCode = true;
-      }, this.TIME_OUT);
+      // setTimeout(() => {
+      //   this.isHideCode = true;
+      // }, this.TIME_OUT);
     }
   }
 
@@ -231,24 +240,46 @@ export class AppComponent implements OnInit {
       this.isHideCode = false;
       this.successToken = data.result[this.player].successToken;
       this.failedToken = data.result[this.player].failedToken;
+
+      this.opponentSuccessToken = data.result[this.opponent].successToken;
+      this.opponentFailedToken = data.result[this.opponent].failedToken;
+
       alert(`Round has ended. The correct answer is ${this.generatedCode}`)
 
-      if (this.successToken === 2) {
+      this.isWin = this.successToken === 2 || this.opponentFailedToken === 2;
+      this.isLose = this.failedToken === 2 || this.opponentSuccessToken === 2;
+
+      if (this.isWin) {
         alert(`You WINNNNNNNNNNN`);
       }
 
-      if (this.failedToken === 2) {
+      if (this.isLose) {
         alert(`You lose :(`);
       }
 
       this.endRound();
     });
 
-    this.pusherChannel.bind(EVENTS.MEMBER_ADDED, (member: any) => this.players++);
-    this.pusherChannel.bind(EVENTS.MEMBER_REMOVED, (member: any) => this.players--);
+    this.pusherChannel.bind(EVENTS.MEMBER_ADDED, (member: any) => {
+      this.players++;
+      this.opponent = member.id;
+    });
+
+    this.pusherChannel.bind(EVENTS.MEMBER_REMOVED, (member: any) => {
+      this._gameService.removeMember(member.id).subscribe();
+      this.players--;
+    });
+
     this.pusherChannel.bind(EVENTS.SUBSCRIPTION_SUCCEEDED, (members: { count: any; }) => {
       this.players = members.count;
       this.player = this.pusherChannel.members.myID;
+      this.pusherChannel.members.each((memberId: any) => {
+        if (this.player !== memberId.id) {
+          this.opponent = memberId.id;
+        }
+      });
+
+      this._gameService.addMember(this.player).subscribe();
     })
   }
 

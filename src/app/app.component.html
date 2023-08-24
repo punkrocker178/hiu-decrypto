@@ -27,10 +27,16 @@
         <div class="generated-codes content has-text-centered is-size-2-mobile is-size-3">
           {{ playerCodes.length > 0 && !isHideCode ? playerCodes : '000' }}
         </div>
+        <div (click)="hideCode()" class="is-flex is-justify-content-center pointer">
+          <span class="material-symbols-outlined">
+            visibility_off
+          </span>
+        </div>
       </div>
     </div>
 
-    <button [disabled]="wordsMap.size === 0 || (wordsMap.size > 0 && isReady)" class="button is-primary" (click)="ready()">
+    <button [disabled]="wordsMap.size === 0 || (wordsMap.size > 0 && isReady)" class="button is-primary"
+      (click)="ready()">
       Ready
     </button>
 
@@ -51,16 +57,24 @@
         <div class="card-header-title">Summary</div>
       </header>
       <div class="card-content has-text-weight-bold">
-        <div class="has-text-success">Success: {{ successToken }}</div>
-        <div class="has-text-danger">Failed: {{ failedToken }}</div>
+        <div class="columns is-mobile">
+          <div class="column is-half">
+            <div class="has-text-success">Success: {{ successToken }}</div>
+            <div class="has-text-danger">Failed: {{ failedToken }}</div>
+          </div>
+          <div class="column is-half">
+            <div class="has-text-success">Opponent Success: {{ opponentSuccessToken }}</div>
+            <div class="has-text-danger">Opponent Failed: {{ opponentFailedToken }}</div>
+          </div>
+        </div>
       </div>
-      <div *ngIf="successToken == 2">
+      <div *ngIf="isWin">
         <div>You Win!</div>
         <div class="image-container">
           <img src="assets/img/decrypto3.webp" alt="yea" />
         </div>
       </div>
-      <div *ngIf="failedToken == 2">
+      <div *ngIf="isLose">
         <div>You Lose!</div>
         <div class="image-container">
           <img src="assets/img/decrypto2.webp" alt="huhu" />
@@ -74,8 +88,8 @@
   <ng-container *ngIf="isOfflineMode">
     <button *ngIf="!isRoundStarted" (click)="randomizeWords()" class="button mb-2 is-info w-100">Pick words for
       me</button>
-    <button class="button mb-2 is-warning w-100"
-    [disabled]="isCodeGenerated" (click)="clientGenerateCode()">Generate code</button>
+    <button class="button mb-2 is-warning w-100" [disabled]="isCodeGenerated" (click)="clientGenerateCode()">Generate
+      code</button>
 
     <div class="columns is-multiline mb-3">
       <div class="column is-half-tablet is-one-quarter-fullhd" *ngFor="let word of words; let idx = index">
@@ -93,6 +107,11 @@
       <div class="card-content">
         <div class="generated-codes content has-text-centered is-size-2-mobile is-size-3">
           {{ playerCodes.length > 0 && !isHideCode ? playerCodes : '000' }}
+        </div>
+        <div (click)="hideCode()" class="is-flex is-justify-content-center pointer">
+          <span class="material-symbols-outlined">
+            visibility_off
+          </span>
         </div>
       </div>
     </div>

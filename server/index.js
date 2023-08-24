@@ -15,10 +15,8 @@ let state = {
   round: 1,
   players: {},
   playersTurn: [],
-  playerGuesses: 0,
   channel: '',
   generatedCode: '',
-  numReady: 0,
 };
 
 let codesMap = new Map();
@@ -36,11 +34,21 @@ const generateCode = () => {
   return codes;
 }
 
-function getRandomInt(min, max) {
+const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
 }
+
+
+const checkReady = (playerIds) => playerIds.every(playerId => !!state.players[playerId].isReady);
+
+const resetPLayersReadyState = (playerIds) => {
+  playerIds.forEach(playerId => {
+    state.players[playerId].isReady = false;
+  });
+};
+
 // initialise Pusher.
 // Replace with your credentials from the Pusher Dashboard
 const pusher = new Pusher({
@@ -73,18 +81,36 @@ app.post('/pusher/auth', function (req, res) {
   res.send(auth);
 });
 
-app.post('/api/ready', (req, res) => {
-  state.numReady++;
+app.post('/api/member/add', (req, res) => {
   const playerId = req.body.playerId;
   state.players[playerId] = {
     successToken: 0,
-    failedToken: 0
-  }
+    failedToken: 0,
+    isReady: false,
+    guess: ''
+  };
+  console.log('Member added', state.players[playerId]);
+  res.sendStatus(200);
+});
 
-  if (state.numReady == NUM_PLAYERS) {
+app.delete('/api/member/remove/:playerId', (req, res) => {
+  const playerId = req.params.playerId;
+  delete state.players[playerId];
+  console.log('Member removed', playerId);
+  res.sendStatus(200);
+});
+
+app.post('/api/ready', (req, res) => {
+  const playerId = req.body.playerId;
+  state.players[playerId].isReady = true;
+
+  const playerIds = Object.keys(state.players);
+  const isAllPlayersReady = checkReady(playerIds);
+  console.log(`Player: ${playerId} ready`);
+  console.log(state.players);
+  if (isAllPlayersReady) {
     const codes = generateCode().join('');
     state.generatedCode = codes;
-    const playerIds = Object.keys(state.players);
     for (let i = 1; i <= MAX_ROUNDS; i++) {
       if (i % 2 === 0) {
         state.playersTurn.push(playerIds[1]);
@@ -97,23 +123,35 @@ app.post('/api/ready', (req, res) => {
       generatedCode: codes,
       playerTurn: state.playersTurn[state.round - 1]
     });
+
+    resetPLayersReadyState(playerIds);
   }
   res.sendStatus(200);
 });
 
 app.post('/api/startRound', (req, res) => {
-  state.numReady++;
+  const playerId = req.body.playerId;
+  state.players[playerId].isReady = true;
 
-  if (state.numReady == NUM_PLAYERS) {
+  const playerIds = Object.keys(state.players);
+  const isAllPlayersReady = checkReady(playerIds);
+
+  console.log(`Player: ${playerId} ready`);
+
+  if (isAllPlayersReady) {
     state.round++;
     const codes = generateCode().join('');
     state.generatedCode = codes;
+
     pusher.trigger(state.channel, 'round-started', {
       round: state.round,
       generatedCode: codes,
       playerTurn: state.playersTurn[state.round - 1]
     });
+
+    resetPLayersReadyState(playerIds);
   };
+
   res.sendStatus(200);
 });
 
@@ -122,6 +160,8 @@ app.post('/api/guess', (req, res) => {
   const playerGuessCode = req.body.playerGuessCode;
   const isPlayerRound = state.playersTurn[state.round - 1] == req.body.playerId;
 
+  state.players[req.body.playerId].guess = playerGuessCode;
+
   if (isPlayerRound && (generatedCode != playerGuessCode)) {
     state.players[req.body.playerId]['failedToken']++;
   }
@@ -129,13 +169,18 @@ app.post('/api/guess', (req, res) => {
     state.players[req.body.playerId]['successToken']++;
   }
 
-  state.playerGuesses++;
+  const playerIds = Object.keys(state.players);
+  const allPlayerGuessed = playerIds.every(playerId => state.players[playerId].guess !== '');
 
-  if (state.playerGuesses == NUM_PLAYERS) {
-    state.numReady = 0;
-    state.playerGuesses = 0;
+  if (allPlayerGuessed) {
     pusher.trigger(state.channel, 'round-ended', {
       result: state.players
+    });
+
+    const playerIds = Object.keys(state.players);
+    playerIds.forEach(playerId => {
+      state.players[playerId].isReady = false;
+      state.players[playerId].guess = '';
     });
   }
 
@@ -145,15 +190,16 @@ app.post('/api/guess', (req, res) => {
 app.post('/api/reset', (req, res) => {
   state.round = 1;
   state.generatedCode = '';
-  state.numReady = 0;
   state.players = {};
   state.playersTurn = [];
-  for (let player in state.players) {
-    state.players[player] = {
-      successToken: 0,
-      failedToken: 0
-    }
-  }
+  // for (let player in state.players) {
+  //   state.players[player] = {
+  //     successToken: 0,
+  //     failedToken: 0,
+  //     guess: '',
+  //     isReady: false
+  //   }
+  // }
   pusher.trigger(state.channel, 'game-reset', {});
   res.sendStatus(200);
 });

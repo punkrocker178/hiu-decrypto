@@ -119,6 +119,7 @@ export class AppComponent implements OnInit {
   }
 
   public resetGame(): void {
+    // Needs rework
     if (!this.isOfflineMode) {
       this._gameService.reset().subscribe();
     } else {

@@ -8,26 +8,20 @@ import { NullableValuePipe } from './pipes/nullableValue.pipe';
 import { ReactiveFormsModule } from '@angular/forms';
 import { GameService } from './services/game.service';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { WordSelectComponent } from './components/word-select/word-select.component';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    NullableValuePipe
-  ],
-  imports: [
-    BrowserModule,
-    CommonModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    AppRoutingModule,
-    WordCardComponent,
-    WordSelectComponent
-  ],
-  providers: [
-    GameService
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        NullableValuePipe
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        CommonModule,
+        ReactiveFormsModule,
+        AppRoutingModule,
+        WordCardComponent,
+        WordSelectComponent], providers: [
+        GameService,
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }

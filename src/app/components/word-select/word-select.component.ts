@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, UntypedFormGroup } from '@angular/forms';
+import { debounceTime } from 'rxjs';
 
 @Component({
   selector: 'app-word-select',
@@ -25,10 +26,16 @@ export class WordSelectComponent implements OnInit {
 
   @Output() wordSelected: EventEmitter<string> = new EventEmitter();
 
-  ngOnInit(): void {
-    this.filteredWords = this.wordList;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['wordList']) {
+      this.filteredWords = this.wordList;
+    }
+  }
 
-    this.mainForm.controls['search'].valueChanges.subscribe((value) => {
+  ngOnInit(): void {
+    this.mainForm.controls['search'].valueChanges.pipe(
+      debounceTime(300)
+    ).subscribe((value) => {
       if (value === '') {
         this.filteredWords = this.wordList;
       }

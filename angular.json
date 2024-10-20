@@ -15,11 +15,12 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser-esbuild",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/hiu-decrypto",
+            "outputPath": {
+              "base": "dist/hiu-decrypto"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -31,11 +32,12 @@
             ],
             "styles": [
               "src/styles.scss",
-              "node_modules/bulma/bulma.sass"
+              "node_modules/bulma/css/bulma.min.css"
             ],
             "scripts": [
               "node_modules/pusher-js/dist/web/pusher.min.js"
-            ]
+            ],
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -43,7 +45,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "1.5mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -54,9 +56,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -68,10 +68,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "hiu-decrypto:build:production"
+              "buildTarget": "hiu-decrypto:build:production"
             },
             "development": {
-              "browserTarget": "hiu-decrypto:build:development"
+              "buildTarget": "hiu-decrypto:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -79,7 +79,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "hiu-decrypto:build"
+            "buildTarget": "hiu-decrypto:build"
           }
         },
         "test": {

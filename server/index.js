@@ -60,7 +60,7 @@ const pusher = new Pusher({
 });
 
 // to serve our JavaScript, CSS and index.html
-app.use(express.static('./dist/hiu-decrypto'));
+app.use(express.static('./dist/hiu-decrypto/browser'));
 
 // CORS
 app.all('/*', function (req, res, next) {
@@ -207,7 +207,7 @@ app.post('/api/reset', (req, res) => {
 // direct all other requests to the built app view
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, './dist/hiu-decrypto/index.html'));
+  res.sendFile(path.join(__dirname, './dist/hiu-decrypto/browser/index.html'));
 });
 
 // start server

@@ -13,7 +13,9 @@
     <div class="columns is-multiline mb-3">
       <div class="column is-half-tablet is-one-quarter-fullhd mb-2" *ngFor="let word of words; let idx = index">
         <div class="mb-2">
-          <app-word-select [wordList]="wordListFile" (wordSelected)="updateWord($event, idx)"></app-word-select>
+          @if (wordListFile) {
+            <app-word-select [wordList]="wordListFile" (wordSelected)="updateWord($event, idx)"></app-word-select>
+          }
         </div>
         <app-word-card [word]="word" [index]="idx"></app-word-card>
       </div>
@@ -119,7 +121,7 @@
 
   <ng-container>
     <button (click)="resetGame()" class="button is-danger w-100 reset-btn mb-2">Reset game - dont click</button>
-    <button (click)="isOfflineMode = true" class="button is-info w-100">Offline mode</button>
+    <!-- <button (click)="isOfflineMode = true" class="button is-info w-100">Offline mode</button> -->
   </ng-container>
 </div>
 
